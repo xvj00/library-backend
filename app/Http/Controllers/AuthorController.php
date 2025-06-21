@@ -14,4 +14,21 @@ class AuthorController extends Controller
         $author = Author::create($data);
         return response()->json($author);
     }
+
+    public function update(Request $request, $id)
+    {
+        $author = Author::findOrFail($id);
+        $data = $request->validate([
+            'name' => 'sometimes|string',
+        ]);
+        $author->update($data);
+        return response()->json(['message' => 'Author updated successfully', 'author' => $author]);
+    }
+
+    public function destroy($id)
+    {
+        $author = Author::findOrFail($id);
+        $author->delete();
+        return response()->json(['message' => 'Author deleted successfully']);
+    }
 }

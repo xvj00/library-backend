@@ -22,7 +22,7 @@ class Book extends Model
 
     public function genres()
     {
-        return $this->belongsToMany(Genre::class, 'genre_books', 'book_id', 'genre_id');
+        return $this->belongsToMany(Genre::class, 'genre_books');
     }
 
     public function editions()
@@ -55,7 +55,12 @@ class Book extends Model
 
     public function reviews()
     {
-        return $this->hasMany(Review::class, 'book_id');
+        return $this->hasMany(Review::class);
+    }
+
+    public function averageRating(): ?float
+    {
+        return $this->reviews()->avg('rating');
     }
 
 }

@@ -15,4 +15,21 @@ class EditionController extends Controller
         $edition = Edition::create($data);
         return response()->json($edition);
     }
+
+    public function update(Request $request, $id)
+    {
+        $edition = Edition::findOrFail($id);
+        $data = $request->validate([
+            'title' => 'sometimes|string',
+        ]);
+        $edition->update($data);
+        return response()->json(['message' => 'Edition updated successfully', 'edition' => $edition]);
+    }
+
+    public function destroy($id)
+    {
+        $edition = Edition::findOrFail($id);
+        $edition->delete();
+        return response()->json(['message' => 'Edition deleted successfully']);
+    }
 }

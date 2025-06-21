@@ -17,6 +17,14 @@ class BookController extends Controller
         return response()->json(['books' => $books], 200);
     }
 
+    public function show($id)
+    {
+        $book = Book::with('editions', 'authors', 'genres')->findOrFail($id);
+
+        return response()->json(['book' => $book], 200);
+
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -32,7 +40,37 @@ class BookController extends Controller
         $book->edition_id = $request->edition_id;
         $book->save();
 
-        return response()->json(['message' => 'Book created successfully',$book],200);
+        return response()->json(['message' => 'Book created successfully',$book],201);
 
+    }
+
+    public function update(Request $request, $id)
+    {
+        $book = Book::findOrFail($id);
+        $data = $request->validate([
+            'title' => 'sometimes|string',
+            'author_id' => 'sometimes|integer',
+            'genre_id' => 'sometimes|integer',
+            'edition_id' => 'sometimes|integer',
+        ]);
+        $book->update($data);
+        if ($request->has('author_id')) {
+            $book->authors()->sync([$request->author_id]);
+        }
+        if ($request->has('genre_id')) {
+            $book->genres()->sync([$request->genre_id]);
+        }
+        if ($request->has('edition_id')) {
+            $book->edition_id = $request->edition_id;
+            $book->save();
+        }
+        return response()->json(['message' => 'Book updated successfully', 'book' => $book::with('authors', 'genres', 'editions')->find($id)], 201);
+    }
+
+    public function destroy($id)
+    {
+        $book = Book::findOrFail($id);
+        $book->delete();
+        return response()->json(['message' => 'Book deleted successfully']);
     }
 }

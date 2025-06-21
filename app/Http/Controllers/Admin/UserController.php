@@ -28,7 +28,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request -> validate([
-            'password' => 'nullable|string|confirmed:',
+            'password' => 'nullable|string',
             'role' => 'required|string',
         ]);
         $user = User::find($id);
